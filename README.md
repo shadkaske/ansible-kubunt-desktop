@@ -1,7 +1,24 @@
 # Install My Personal Applications and Configurations
 
+### Installed
+
+    - Shell
+        - fish
+        - zsh
+    - Utilities
+        - fzf
+        - lazygit
+        - tmux with plugin manager
+    - Cargo
+        - bat
+        - eza
+        - fd
+        - ripgrep
+        - starship
+        - zoxide
+    - Nodejs ( using snap -- it's just easier )
+
 ### TODO:
-    - Install Shell Packages ( zsh fish )
     - Firefox:
         - Remove Snap
         - Replace with Deb
