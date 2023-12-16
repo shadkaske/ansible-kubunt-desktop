@@ -15,4 +15,3 @@ config_path: "{{ ansible_env.HOME }}/.config"
 
 neovim_source_path: "{{ source_path }}/neovim"
 
-npm_prefix: "{{ local_share }}/npm"

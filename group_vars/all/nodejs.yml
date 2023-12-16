@@ -5,3 +5,5 @@ npm_global_packages:
   - shellcheck
   - tree-sitter-cli
 
+npm_prefix: "{{ ansible_env.HOME }}/.local/share/npm"
+
