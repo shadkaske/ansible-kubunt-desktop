@@ -1,7 +1,7 @@
 ---
 - name: Install Neovim build dependencies
   block:
-    - name: Install Neovim build dependencies (Ubuntu).
+    - name: Install Neovim build dependencies and helpers
       become: true
       ansible.builtin.apt:
         name:
@@ -17,6 +17,7 @@
           - libtool-bin
           - ninja-build
           - pkg-config
+          - python3-neovim
           - unzip
         state: present
 
@@ -118,5 +119,8 @@
         cmd: "make install"
         chdir: "{{ neovim_source_path }}"
       tags: skip_ansible_lint
+
+- name: Install Debug Adapter
+  ansible.builtin.include_tasks: debug_adapter.yml
 
 # vim: ft=yaml.ansible:

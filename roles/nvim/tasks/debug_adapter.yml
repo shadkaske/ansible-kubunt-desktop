@@ -1,0 +1,31 @@
+---
+- name: Install VSCode Debug Adapter
+  become: false
+  block:
+    - name: Ensure sources directory exists
+      ansible.builtin.file:
+        path: "{{ code_path }}/sources"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "0775"
+
+    - name: Clone vscode-php-debug Git Repo
+      ansible.builtin.git:
+        repo: "https://github.com/xdebug/vscode-php-debug"
+        dest: "{{ code_path }}/sources/vscode-php-debug"
+        version: main
+
+    - name: Install vscode-php-debug Dependancies
+      ansible.builtin.command:
+        cmd: npm install
+        chdir: "{{ code_path }}/sources/vscode-php-debug"
+        creates: "{{ code_path }}/sources/vscode-php-debug/node_modules"
+
+    - name: Build vscode-php-debug
+      ansible.builtin.command:
+        cmd: npm run build
+        chdir: "{{ code_path }}/sources/vscode-php-debug"
+        creates: "{{ code_path }}/sources/vscode-php-debug/out"
+
+# vim: ft=yaml.ansible
