@@ -1,7 +1,11 @@
 ---
+- name: Set NPM Global Path
+  ansible.builtin.set_fact:
+    npm_global: "{{ npm_prefix | default(ansible_env.HOME + '/.local/share/npm') }}"
+
 - name: Ensure NPM Global Directory Exists
   ansible.builtin.file:
-    path: "{{ npm_prefix }}"
+    path: "{{ npm_global }}"
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
@@ -15,23 +19,16 @@
     channel: 18/stable
     classic: true
 
-- name: Register Current npm Prefix
+- name: Set NPM Prefix
   ansible.builtin.command:
-    cmd: npm get prefix
-  register: current_npm_prefix
+    cmd: "npm set prefix {{ npm_global }}"
   tags: skip_ansible_lint
 
-- name: Set My NPM Prefix
-  ansible.builtin.command:
-    cmd: "npm set prefix {{ npm_prefix }}"
-  when: current_npm_prefix.stdout != npm_prefix
-  tags: skip_ansible_lint
 
 - name: Install Global NPM Packages if Defined
   community.general.npm:
     name: "{{ item }}"
     global: true
-  when: npm_global_packages is defined
-  with_items: "{{ npm_global_packages }}"
+  with_items: "{{ npm_global_packages | default(['yarn', 'neovim', 'eslint', 'prettier', 'shellcheck', 'tree-sitter-cli']) }}"
 
 # vim: ft=yaml.ansible:
