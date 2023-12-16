@@ -2,3 +2,4 @@ venv
 kubuntu-22.04
 .become.pass
 kubuntu-22.04.conf
+debug.yml
