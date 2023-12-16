@@ -29,7 +29,7 @@
 
   roles:
     - role: nodejs
-      tags: node
+      tags: [node, nodejs]
     - role: shell
       tags: shell
     - role: nvim
