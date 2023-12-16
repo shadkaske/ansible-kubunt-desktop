@@ -18,4 +18,11 @@
   when: current_npm_prefix.stdout != npm_prefix
   tags: skip_ansible_lint
 
+- name: Install Global NPM Packages if Defined
+  community.general.npm:
+    name: "{{ item }}"
+    global: true
+  when: npm_global_packages is defined
+  with_items: "{{ npm_global_packages }}"
+
 # vim: ft=yaml.ansible:

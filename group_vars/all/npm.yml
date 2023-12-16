@@ -1,0 +1,7 @@
+npm_global_packages:
+  - neovim
+  - eslint
+  - prettier
+  - shellcheck
+  - tree-sitter-cli
+
