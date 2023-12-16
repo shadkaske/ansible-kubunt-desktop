@@ -1,8 +1,6 @@
 ---
 ansible_code_path: "{{ ansible_env.HOME }}/Code/ansible"
 
-local_bin: "{{ ansible_env.HOME }}/.local/bin"
-
 local_share: "{{ ansible_env.HOME }}/.local/share"
 
 code_path: "{{ ansible_env.HOME }}/Code"
@@ -14,4 +12,3 @@ source_path: "{{ code_path }}/sources"
 config_path: "{{ ansible_env.HOME }}/.config"
 
 neovim_source_path: "{{ source_path }}/neovim"
-

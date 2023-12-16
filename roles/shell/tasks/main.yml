@@ -9,7 +9,7 @@
 
 - name: Create Local Bin Directory
   ansible.builtin.file:
-    path: "{{ local_bin }}"
+    path: "{{ local_bin | default(ansible_env.HOME + '/.local/bin') }}"
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"

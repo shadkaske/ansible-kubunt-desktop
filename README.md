@@ -1,22 +1,17 @@
 # Install My Personal Applications and Configurations
 
-### Installed
+## Roles:
 
-    - Shell
-        - fish
-        - zsh
-    - Utilities
-        - fzf
-        - lazygit
-        - tmux with plugin manager
-    - Cargo
-        - bat
-        - eza
-        - fd
-        - ripgrep
-        - starship
-        - zoxide
-    - Nodejs ( using snap -- it's just easier )
+Default roles used to install are as follows.
+
+### Shell
+
+Defaults can be overridden with the following variables. Put a yaml file in group_vars/{all or workstation}.
+For path variables do not include the trailing slash
+
+```yaml
+local_bin: "{{ ansible_env.HOME }}/.local/bin"
+```
 
 ### TODO:
     - Firefox:

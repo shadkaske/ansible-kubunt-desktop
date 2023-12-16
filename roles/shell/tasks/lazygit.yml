@@ -1,4 +1,8 @@
 ---
+- name: Set User Local Bin Variable
+  ansible.builtin.set_fact:
+    user_bin: "{{ local_bin | default(ansible_env.HOME + '/.local/bin') }}"
+
 - name: Get the Url Details for latest LazyGit
   ansible.builtin.uri:
     url: https://github.com/jesseduffield/lazygit/releases/latest
@@ -15,16 +19,17 @@
 - name: Extract Archive
   ansible.builtin.unarchive:
     src: "https://github.com/jesseduffield/lazygit/releases/download/{{ lazygit_version }}/lazygit_{{ lazygit_version[1:] }}_Linux_x86_64.tar.gz"
-    dest: "{{ local_bin }}"
+    dest: "{{ user_bin }}"
     remote_src: true
     include:
       - "lazygit"
 
 - name: Set Permissions on LazyGit
   ansible.builtin.file:
-    path: "{{ local_bin }}/lazygit"
+    path: "{{ user_bin }}/lazygit"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: "0775"
 
 # code: language=ansible
+# vim: ft=yaml.ansible
