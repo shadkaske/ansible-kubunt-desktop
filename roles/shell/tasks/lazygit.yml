@@ -1,0 +1,30 @@
+---
+- name: Get the Url Details for latest LazyGit
+  ansible.builtin.uri:
+    url: https://github.com/jesseduffield/lazygit/releases/latest
+  register: lazygit_latest
+
+- name: Split the Redirect Url
+  ansible.builtin.set_fact:
+    lazygit_url_parts: "{{ lazygit_latest.url | urlsplit }}"
+
+- name: Get the Version Number from the URL
+  ansible.builtin.set_fact:
+    lazygit_version: "{{ lazygit_url_parts.path | split('/') | last }}"
+
+- name: Extract Archive
+  ansible.builtin.unarchive:
+    src: "https://github.com/jesseduffield/lazygit/releases/download/{{ lazygit_version }}/lazygit_{{ lazygit_version[1:] }}_Linux_x86_64.tar.gz"
+    dest: "{{ local_bin }}"
+    remote_src: true
+    include:
+      - "lazygit"
+
+- name: Set Permissions on LazyGit
+  ansible.builtin.file:
+    path: "{{ local_bin }}/lazygit"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+
+# code: language=ansible

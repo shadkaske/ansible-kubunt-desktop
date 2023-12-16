@@ -1,0 +1,16 @@
+---
+- name: Install Tmux
+  ansible.builtin.package:
+    name: tmux
+    state: present
+
+- name: Download TPM
+  ansible.builtin.git:
+    repo: https://github.com/tmux-plugins/tpm
+    dest: "{{ ansible_env.HOME }}/.tmux/plugins/tpm"
+    clone: true
+    update: true
+    version: master
+
+# code: language=ansible
+# vim: ft=yaml.ansible

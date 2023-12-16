@@ -1,0 +1,80 @@
+---
+- name: Clone Oh My Zsh
+  ansible.builtin.git:
+    repo: https://github.com/ohmyzsh/ohmyzsh.git
+    dest: "{{ ansible_env.HOME }}/.local/share/oh-my-zsh"
+    clone: true
+    update: true
+    version: master
+
+- name: Variables for Plugin and Themes
+  ansible.builtin.set_fact:
+    themes_dir: "{{ ansible_env.HOME }}/.local/share/zsh-custom/themes"
+    plugin_dir: "{{ ansible_env.HOME }}/.local/share/zsh-custom/plugins"
+
+- name: Create Theme Directory
+  ansible.builtin.file:
+    path: "{{ themes_dir }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+
+- name: Create Plugins Directory
+  ansible.builtin.file:
+    path: "{{ plugin_dir }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+
+- name: Install powerlevel10k
+  ansible.builtin.git:
+    repo: https://github.com/romkatv/powerlevel10k
+    dest: "{{ themes_dir }}/powerlevel10k"
+    clone: true
+    update: true
+    version: master
+
+- name: Install Eza Plugin
+  ansible.builtin.git:
+    repo: https://github.com/z-shell/zsh-eza
+    dest: "{{ plugin_dir }}/zsh-eza"
+    clone: true
+    update: true
+    version: main
+
+- name: Install Fast Syntax Highlighting Plugin
+  ansible.builtin.git:
+    repo: https://github.com/zdharma-continuum/fast-syntax-highlighting.git
+    dest: "{{ plugin_dir }}/fast-syntax-highlighting"
+    clone: true
+    update: true
+    version: master
+
+- name: Install Autosuggest Plugin
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-autosuggestions.git
+    dest: "{{ plugin_dir }}/zsh-autosuggestions"
+    clone: true
+    update: true
+    version: master
+
+- name: Install Bat Plugin
+  ansible.builtin.git:
+    repo: https://github.com/fdellwing/zsh-bat
+    dest: "{{ plugin_dir }}/zsh-bat"
+    clone: true
+    update: true
+    version: master
+
+- name: Install artisan Plugin
+  ansible.builtin.git:
+    repo: https://github.com/jessarcher/zsh-artisan.git
+    dest: "{{ plugin_dir }}/artisan"
+    clone: true
+    update: true
+    version: master
+
+# code: language=ansible
+# vim: set ft=yaml.ansible:

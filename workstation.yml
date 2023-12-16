@@ -1,0 +1,34 @@
+---
+- name: Configure Ubuntu Workstation
+  hosts: workstations
+  remote_user: kaskshad
+
+  pre_tasks:
+    - name: Update System
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: dist
+
+    - name: Create ansible Temp dir
+      become: true
+      ansible.builtin.file:
+        path: /root/.ansible/tmp
+        state: directory
+        owner: root
+        group: root
+        mode: "0775"
+
+    - name: Ensure User Applications Dir Exists
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.local/share/applications"
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: "0775"
+
+  roles:
+    - role: shell
+      tags: shell
+
+# vim: ft=yaml.ansible:

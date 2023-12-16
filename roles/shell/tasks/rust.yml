@@ -1,0 +1,47 @@
+---
+- name: Install PreReq Packages for Rust Tools
+  become: true
+  ansible.builtin.apt:
+    name: cmake
+    state: present
+
+- name: Check if rustup is already installed
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.cargo/bin/rustup"
+  register: rustup_installed
+
+- name: Install rustup if missing
+  when: not rustup_installed.stat.exists
+  block:
+    - name: Download Rustup Installer
+      ansible.builtin.get_url:
+        url: https://sh.rustup.rs
+        dest: /tmp/rustup.sh
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: "0775"
+
+    - name: Run rustup installer
+      ansible.builtin.command:
+        cmd: bash /tmp/rustup.sh -y
+        creates: "{{ ansible_env.HOME }}/.cargo"
+
+- name: Install Cargo Packages
+  ansible.builtin.command:
+    cmd: "{{ ansible_env.HOME }}/.cargo/bin/cargo install {{ item.pkg }}"
+    creates: "{{ ansible_env.HOME }}/.cargo/bin/{{ item.bin }}"
+  loop:
+    - pkg: bat
+      bin: bat
+    - pkg: eza
+      bin: eza
+    - pkg: fd-find
+      bin: fd
+    - pkg: ripgrep
+      bin: rg
+    - pkg: zoxide
+      bin: zoxide
+    - pkg: starship
+      bin: starship
+
+# vim: set ft=yaml.ansible:

@@ -1,0 +1,16 @@
+---
+- name: Add Fish Shell PPA
+  become: true
+  ansible.builtin.apt_repository:
+    repo: ppa:fish-shell/release-3
+    state: present
+    update_cache: true
+
+- name: Install Fish Shell
+  become: true
+  ansible.builtin.apt:
+    package: fish
+    state: present
+    update_cache: true
+
+# vim: ft=yaml.ansible:

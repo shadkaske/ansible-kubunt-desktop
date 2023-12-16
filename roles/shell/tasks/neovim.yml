@@ -1,0 +1,105 @@
+---
+- name: Install Neovim build dependencies
+  block:
+    - name: Install Neovim build dependencies (Ubuntu).
+      become: true
+      ansible.builtin.apt:
+        name:
+          - autoconf
+          - automake
+          - cmake
+          - curl
+          - doxygen
+          - g++
+          - gettext
+          - git
+          - libtool
+          - libtool-bin
+          - ninja-build
+          - pkg-config
+          - unzip
+        state: present
+
+# ---------------------------------------------------------------------------- #
+
+- name: Remove distribution packaged version
+  become: true
+  ansible.builtin.package:
+    name: neovim
+    state: absent
+
+# ---------------------------------------------------------------------------- #
+
+- name: Gather existing Neovim command information
+  block:
+    - name: Check if Neovim command is present.
+      ansible.builtin.command: which nvim
+      failed_when: false
+      changed_when: false
+      check_mode: false
+      register: neovim_exists
+
+    - name: Gather Neovim existing version if present.
+      ansible.builtin.command:
+        cmd: "nvim --version | head -n1 | cut -d' ' -f2"
+      failed_when: false
+      changed_when: false
+      check_mode: false
+      register: neovim_installed_version
+      when: neovim_exists.rc == 0
+
+    - name: Gather Neovim existing commit id if present.
+      ansible.builtin.command:
+        cmd: "nvim --version | head -n1 | cut -d'-' -f3"
+      failed_when: false
+      changed_when: false
+      check_mode: false
+      register: neovim_installed_commit_id
+      when: neovim_exists.rc == 0
+
+    - name: Set commit id
+      ansible.builtin.set_fact:
+        commit_id: "{{ neovim_installed_commit_id.stdout }}"
+      when: neovim_exists.rc == 0
+
+# ---------------------------------------------------------------------------- #
+
+- name: Ensure Neovim source path is present.
+  ansible.builtin.file:
+    path: "{{ neovim_source_path }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Clone or Update Neovim Source from GitHub
+  ansible.builtin.git:
+    repo: "https://github.com/neovim/neovim.git"
+    dest: "{{ neovim_source_path }}"
+    version: "{{ neovim_desired_tag }}"
+    clone: true
+    update: true
+    accept_hostkey: true
+  tags: skip_ansible_lint
+
+# ---------------------------------------------------------------------------- #
+- name: Clean Neovim build and deps dirs before building.
+  ansible.builtin.command:
+    cmd: "make distclean"
+    chdir: "{{ neovim_source_path }}"
+  tags: skip_ansible_lint
+
+- name: Build neovim from source.
+  ansible.builtin.command:
+    cmd: "make"
+    chdir: "{{ neovim_source_path }}"
+  tags: skip_ansible_lint
+
+- name: Install Neovim.
+  become: true
+  ansible.builtin.command:
+    cmd: "make install"
+    chdir: "{{ neovim_source_path }}"
+  tags: skip_ansible_lint
+
+# vim: ft=yaml.ansible:
