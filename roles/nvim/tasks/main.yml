@@ -30,40 +30,6 @@
 
 # ---------------------------------------------------------------------------- #
 
-- name: Gather existing Neovim command information
-  block:
-    - name: Check if Neovim command is present.
-      ansible.builtin.command: which nvim
-      failed_when: false
-      changed_when: false
-      check_mode: false
-      register: neovim_exists
-
-    - name: Gather Neovim existing version if present.
-      ansible.builtin.command:
-        cmd: "nvim --version | head -n1 | cut -d' ' -f2"
-      failed_when: false
-      changed_when: false
-      check_mode: false
-      register: neovim_installed_version
-      when: neovim_exists.rc == 0
-
-    - name: Gather Neovim existing commit id if present.
-      ansible.builtin.command:
-        cmd: "nvim --version | head -n1 | cut -d'-' -f3"
-      failed_when: false
-      changed_when: false
-      check_mode: false
-      register: neovim_installed_commit_id
-      when: neovim_exists.rc == 0
-
-    - name: Set commit id
-      ansible.builtin.set_fact:
-        commit_id: "{{ neovim_installed_commit_id.stdout }}"
-      when: neovim_exists.rc == 0
-
-# ---------------------------------------------------------------------------- #
-
 - name: Ensure Neovim source path is present.
   ansible.builtin.file:
     path: "{{ neovim_source_path }}"
@@ -83,23 +49,74 @@
   tags: skip_ansible_lint
 
 # ---------------------------------------------------------------------------- #
-- name: Clean Neovim build and deps dirs before building.
-  ansible.builtin.command:
-    cmd: "make distclean"
-    chdir: "{{ neovim_source_path }}"
-  tags: skip_ansible_lint
 
-- name: Build neovim from source.
+- name: Register nvim_exists
   ansible.builtin.command:
-    cmd: "make"
-    chdir: "{{ neovim_source_path }}"
-  tags: skip_ansible_lint
+    cmd: which nvim
+  failed_when: false
+  changed_when: false
+  check_mode: false
+  register: neovim_exists
 
-- name: Install Neovim.
-  become: true
-  ansible.builtin.command:
-    cmd: "make install"
-    chdir: "{{ neovim_source_path }}"
+- name: Register Neovim Version Change
+  ansible.builtin.set_fact:
+    neovim_version_change: false
+
+- name: Register Neovim Current Version
+  ansible.builtin.command: nvim --version
+  register: neovim_version_output
   tags: skip_ansible_lint
+  when: neovim_exists.rc == 0
+
+- name: Extract Neovim Version Number
+  ansible.builtin.set_fact:
+    installed_neovim_version: "{{ neovim_version_output.stdout_lines | first | regex_search('[0-9].[0-9].[0-9]') }}"
+  when: neovim_exists.rc == 0
+
+- name: Register Checked out Tag Number for Neovim Source
+  ansible.builtin.command:
+    cmd: git tag --points-at HEAD
+    chdir: "{{ neovim_source_path }}"
+  register: neovim_source_tags
+  tags: skip_ansible_lint
+  when: neovim_exists.rc == 0
+
+- name: Register Currently Installed Verions
+  ansible.builtin.set_fact:
+    checked_out_neovim_version: "{{ neovim_source_tags.stdout_lines | last | split('v') | last }}"
+  when: neovim_exists.rc == 0
+
+- name: Register need_version update
+  ansible.builtin.set_fact:
+    needs_compile: "{{ checked_out_neovim_version != installed_neovim_version }}"
+  when: neovim_exists.rc == 0
+
+- name: Register needs_compile to true when neovim does not exist
+  ansible.builtin.set_fact:
+    needs_compile: true
+  when: neovim_exists.rc != 0
+
+# ---------------------------------------------------------------------------- #
+- name: Compile and Install Neovim If Needed
+  when: needs_compile
+  block:
+    - name: Clean Neovim build and deps dirs before building.
+      ansible.builtin.command:
+        cmd: "make distclean"
+        chdir: "{{ neovim_source_path }}"
+      tags: skip_ansible_lint
+
+    - name: Build neovim from source.
+      ansible.builtin.command:
+        cmd: "make"
+        chdir: "{{ neovim_source_path }}"
+      tags: skip_ansible_lint
+
+    - name: Install Neovim.
+      become: true
+      ansible.builtin.command:
+        cmd: "make install"
+        chdir: "{{ neovim_source_path }}"
+      tags: skip_ansible_lint
 
 # vim: ft=yaml.ansible:
