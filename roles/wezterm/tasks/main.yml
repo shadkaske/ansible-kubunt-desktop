@@ -1,0 +1,29 @@
+---
+- name: Get the Url Details for latest LazyGit
+  ansible.builtin.uri:
+    url: https://github.com/wez/wezterm/releases/latest
+  register: wezterm_uri
+
+- name: Split the Redirect Url
+  ansible.builtin.set_fact:
+    wezterm_url_parts: "{{ wezterm_uri.url | urlsplit }}"
+
+- name: Get the Version Number from the URL
+  ansible.builtin.set_fact:
+    wezterm_version: "{{ wezterm_url_parts.path | split('/') | last }}"
+
+- name: Download Deb File
+  ansible.builtin.get_url:
+    url: "https://github.com/wez/wezterm/releases/download/{{ wezterm_version }}/wezterm-{{ wezterm_version }}.Ubuntu22.04.deb"
+    dest: "/tmp/wezterm.deb"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+
+- name: Install WezTerm Deb
+  ansible.builtin.apt:
+    deb: "/tmp/wezterm.deb"
+  become: true
+
+# vim: ft=yaml.ansible:

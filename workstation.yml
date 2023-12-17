@@ -54,5 +54,7 @@
       tags: flatpaks
     - role: kitty
       tags: kitty
+    - role: wezterm
+      tags: wezterm
 
 # vim: ft=yaml.ansible:
