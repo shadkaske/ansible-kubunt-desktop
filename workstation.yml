@@ -75,5 +75,7 @@
       tags: [iaccess, ibm]
     - role: libvirt
       tags: [libvirt, virt]
+    - role: onedrive
+      tags: onedrive
 
 # vim: ft=yaml.ansible:

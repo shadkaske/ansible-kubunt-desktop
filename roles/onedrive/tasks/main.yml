@@ -1,0 +1,41 @@
+---
+- name: Gather Package Facts
+  ansible.builtin.package_facts:
+    manager: apt
+
+- name: Install Onedrive if Missing
+  when: '"onedrive" not in ansible_facts.packages'
+  block:
+    - name: Get OpenSuSE GPG Key
+      ansible.builtin.get_url:
+        url: https://download.opensuse.org/repositories/home:/npreining:/debian-ubuntu-onedrive/xUbuntu_{{ ansible_distribution_version }}/Release.key
+        dest: /tmp/onedrive_key.key
+        mode: '0644'
+
+    - name: Dearmor the Key
+      become: true
+      ansible.builtin.command:
+        cmd: gpg -o /usr/share/keyrings/obs-onedrive.gpg --dearmor /tmp/onedrive_key.key
+        creates: /usr/share/keyrings/obs-onedrive.gpg
+
+    - name: Add Sources List for Build Service
+      become: true
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/onedrive.list
+        content: >
+          deb [arch=amd64 signed-by=/usr/share/keyrings/obs-onedrive.gpg]
+          https://download.opensuse.org/repositories/home:/npreining:/debian-ubuntu-onedrive/xUbuntu_{{ ansible_distribution_version }}/ ./
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Install OneDrive
+      become: true
+      ansible.builtin.apt:
+        name: onedrive
+        state: present
+        install_recommends: true
+        update_cache: true
+
+# code: language=ansible
+# vim: ft=yaml.ansible
