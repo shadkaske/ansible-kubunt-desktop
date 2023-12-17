@@ -71,5 +71,7 @@
       tags: wezterm
     - role: dotfiles
       tags: [dotfiles, chezmoi]
+    - role: iaccess
+      tags: [iaccess, ibm]
 
 # vim: ft=yaml.ansible:
