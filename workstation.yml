@@ -10,6 +10,16 @@
         update_cache: true
         upgrade: dist
 
+    - name: Check for Required Restart
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_required_file
+
+    - name: Restart and wait to connect if Restart is Required
+      ansible.builtin.reboot:
+        connect_timeout: 30
+      when: reboot_required_file.stat.exists
+
     - name: Create ansible Temp dir
       become: true
       ansible.builtin.file:
@@ -53,8 +63,6 @@
       become: true
     - role: snaps
       tags: snaps
-    - role: flatpaks
-      tags: flatpaks
     - role: apt-packages
       tags: apt-packages
     - role: kitty
