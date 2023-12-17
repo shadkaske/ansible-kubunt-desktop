@@ -50,7 +50,7 @@
     version: "{{ neovim_desired_tag }}"
     clone: true
     update: true
-    accept_hostkey: true
+    force: true
   tags: skip_ansible_lint
 
 # ---------------------------------------------------------------------------- #
