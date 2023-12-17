@@ -52,6 +52,8 @@
       tags: snaps
     - role: flatpaks
       tags: flatpaks
+    - role: apt-packages
+      tags: apt-packages
     - role: kitty
       tags: kitty
     - role: wezterm
