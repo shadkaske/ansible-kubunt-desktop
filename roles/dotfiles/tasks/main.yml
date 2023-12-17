@@ -1,11 +1,10 @@
 ---
-- name: Register chezmoi_here
-  ansible.builtin.stat:
-    path: "/usr/bin/chezmoi"
-  register: chezmoi_check
+- name: Gather Package Facts
+  ansible.builtin.package_facts:
+    manager: apt
 
 - name: Download, Install and Apply Chezmoi if Missing
-  when: not chezmoi_check.stat.exists
+  when: "not 'chezmoi' in ansible_facts.packages"
   block:
     - name: Get the Url Details for latest Chezmoi
       ansible.builtin.uri:
