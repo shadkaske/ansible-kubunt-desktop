@@ -1,4 +1,13 @@
 ---
+- name: Set Default Plasma Packages
+  ansible.builtin.set_fact:
+    plasma_packages:
+      - flameshot
+      - ksshaskpass
+      - kwin-bismuth
+      - yakuake
+  when: plasma_packages is not defined
+
 - name: Add kubuntu backports PPA
   become: true
   ansible.builtin.apt_repository:
@@ -14,9 +23,7 @@
 - name: Install Additional Plasma Packages
   become: true
   ansible.builtin.apt:
-    package:
-      - kwin-bismuth
-      - flameshot
-      - ksshaskpass
+    package: "{{ item }}"
+  with_items: "{{ plasma_packages }}"
 
 # vim: ft=yaml.ansible
