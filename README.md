@@ -14,6 +14,10 @@ Local Bin:
 ```yaml
 local_bin: "{{ ansible_env.HOME }}/.local/bin"
 ```
+Code path:
+```yaml
+code_path: "{{ ansible_env.HOME }}/Code"
+```
 
 Neovim Source:
 

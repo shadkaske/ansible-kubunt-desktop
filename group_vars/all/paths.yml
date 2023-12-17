@@ -1,4 +1,0 @@
----
-local_share: "{{ ansible_env.HOME }}/.local/share"
-
-code_path: "{{ ansible_env.HOME }}/Code"
