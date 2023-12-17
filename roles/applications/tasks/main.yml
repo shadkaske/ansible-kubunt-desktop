@@ -1,0 +1,25 @@
+---
+- name: Set FF Policies Path
+  become: true
+  ansible.builtin.set_fact:
+    ff_policy_path: /etc/firefox/policies
+
+- name: Create Firefox Policies Directory
+  become: true
+  ansible.builtin.file:
+    path: "{{ ff_policy_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Copy Firefox Policy
+  become: true
+  ansible.builtin.copy:
+    src: files/firefox_policies.json
+    dest: "{{ ff_policy_path }}/policies.json"
+    owner: root
+    group: root
+    mode: "0644"
+
+# vim: ft=yaml.ansible

@@ -46,5 +46,7 @@
       tags: [font, fonts]
     - role: plasma
       tags: plasma
+    - role: applications
+      tags: [apps, applications]
 
 # vim: ft=yaml.ansible:
