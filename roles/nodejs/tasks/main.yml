@@ -1,4 +1,9 @@
 ---
+- name: Set Default Node Version if Not Defined
+  ansible.builtin.set_fact:
+    node_version: "18"
+  when: node_version is not defined
+
 - name: Set NPM Global Path
   ansible.builtin.set_fact:
     npm_global: "{{ npm_prefix | default(ansible_env.HOME + '/.local/share/npm') }}"
@@ -16,7 +21,7 @@
   community.general.snap:
     name: node
     state: present
-    channel: 18/stable
+    channel: "{{ node_version }}/stable"
     classic: true
 
 - name: Set NPM Prefix
