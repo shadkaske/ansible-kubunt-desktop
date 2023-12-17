@@ -2,10 +2,16 @@
 - name: Set list of additional Apt Packages if not Set
   ansible.builtin.set_fact:
     additional_pkgs:
-      - rofi
-      - python3-venv
+      - curl
       - git-flow
       - git-lfs
+      - lftp
+      - python3-pip
+      - python3-venv
+      - rofi
+      - silversearcher-ag
+      - wget
+      - xclip
     when: additional_pkgs is not defined
   tags: skip_ansible_lint
 
