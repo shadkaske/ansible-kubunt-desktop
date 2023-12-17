@@ -1,0 +1,21 @@
+---
+- name: Set Path for Ranger Devicons
+  ansible.builtin.set_fact:
+    ranger_devicon_path: "{{ ansible_env.HOME }}/.config/ranger/plugins/ranger_devicons"
+  when: ranger_devicon_path is not defined
+
+- name: Install Ranger File Manager
+  become: true
+  ansible.builtin.apt:
+    name: ranger
+    state: present
+
+- name: Clone Ranger Devicons
+  ansible.builtin.git:
+    repo: https://github.com/alexanderjeurissen/ranger_devicons
+    dest: "{{ ranger_devicon_path }}"
+    clone: true
+    update: true
+  tags: skip_ansible_lint
+
+# vim: ft=yaml.ansible:
