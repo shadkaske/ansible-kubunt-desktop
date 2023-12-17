@@ -1,12 +1,4 @@
 ---
-ansible_code_path: "{{ ansible_env.HOME }}/Code/ansible"
-
 local_share: "{{ ansible_env.HOME }}/.local/share"
 
 code_path: "{{ ansible_env.HOME }}/Code"
-
-key_file: "{{ ansible_env.HOME }}/.ssh/workstation_rsa"
-
-source_path: "{{ code_path }}/sources"
-
-config_path: "{{ ansible_env.HOME }}/.config"
