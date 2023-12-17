@@ -1,5 +1,5 @@
 ---
-- name: Get the Url Details for latest LazyGit
+- name: Get the Url Details for latest Wezterm
   ansible.builtin.uri:
     url: https://github.com/wez/wezterm/releases/latest
   register: wezterm_uri
