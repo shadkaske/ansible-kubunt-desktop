@@ -7,4 +7,5 @@
     masked: false
     state: restarted
   listen: "enable libvirtd"
+
 # vim: ts=2 tw=2 et ft=yaml.ansible
