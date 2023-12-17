@@ -69,5 +69,7 @@
       tags: kitty
     - role: wezterm
       tags: wezterm
+    - role: dotfiles
+      tags: [dotfiles, chezmoi]
 
 # vim: ft=yaml.ansible:
