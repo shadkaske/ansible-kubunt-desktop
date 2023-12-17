@@ -1,0 +1,22 @@
+---
+- name: Add kubuntu backports PPA
+  become: true
+  ansible.builtin.apt_repository:
+    repo: ppa:kubuntu-ppa/backports-extra
+    state: present
+
+- name: Update Plasma
+  become: true
+  ansible.builtin.apt:
+    upgrade: full
+    update_cache: true
+
+- name: Install Additional Plasma Packages
+  become: true
+  ansible.builtin.apt:
+    package:
+      - kwin-bismuth
+      - flameshot
+      - ksshaskpass
+
+# vim: ft=yaml.ansible
