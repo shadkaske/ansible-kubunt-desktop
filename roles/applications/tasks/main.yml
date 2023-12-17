@@ -22,4 +22,8 @@
     group: root
     mode: "0644"
 
+# ------------------------------------------- #
+- name: Install Snaps
+  ansible.builtin.include_tasks: snaps.yml
+
 # vim: ft=yaml.ansible

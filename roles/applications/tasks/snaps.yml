@@ -1,0 +1,57 @@
+---
+- name: Set Default Classic Snaps
+  ansible.builtin.set_fact:
+    classic_snaps:
+      - code
+      - intellij-idea-community
+      - phpstorm
+      - pycharm-community
+      - ruby
+  when: classic_snaps is not defined
+
+- name: Set Default Snaps
+  ansible.builtin.set_fact:
+    snaps:
+      - bitwarden
+      - bw
+      - dbeaver-ce
+      - libreoffice
+      - remmina
+      - postman
+      - teams-for-linux
+      - zoom-client
+  when: snaps is not defined
+
+- name: Set Default Edge Snaps
+  ansible.builtin.set_fact:
+    edge_snaps:
+      - outlook-for-linux
+  when: edge_snaps is not defined
+
+- name: Install Classic Snaps
+  become: true
+  community.general.snap:
+    name: "{{ item }}"
+    state: present
+    classic: true
+  with_items: "{{ classic_snaps }}"
+  when: classic_snaps | length > 0
+
+- name: Install Edge Snaps
+  become: true
+  community.general.snap:
+    name: "{{ item }}"
+    state: present
+    channel: edge
+  with_items: "{{ edge_snaps }}"
+  when: edge_snaps | length > 0
+
+- name: Install Snaps
+  become: true
+  community.general.snap:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ snaps }}"
+  when: snaps | length > 0
+
+# vim: ft=yaml.ansible:
