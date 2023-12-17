@@ -6,17 +6,23 @@ Default roles used to install are as follows.
 
 ### Shell
 
-Defaults can be overridden with the following variables. Put a yaml file in group_vars/{all or workstation}.
+Defaults can be overridden with the following variables. Put a yaml file in group_vars/{all or workstation} or in the playbook in vars:.
 For path variables do not include the trailing slash
+
+Local Bin:
 
 ```yaml
 local_bin: "{{ ansible_env.HOME }}/.local/bin"
 ```
 
+Neovim Source:
+
+```yaml
+neovim_source_path: "{{ ansible_env.HOME }}/Code/sources/neovim"
+```
+
 ### TODO:
     - Firefox:
-        - Remove Snap
-        - Replace with Deb
         - Policies for initial set up
     - Git LFS
     - Install Applications:

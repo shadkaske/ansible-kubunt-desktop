@@ -1,4 +1,8 @@
 ---
+- name: Set source path variable
+  ansible.builtin.set_fact:
+    nvim_sources: "{{ neovim_source_path | default(ansible_env.HOME + '/Code/sources/neovim') }}"
+
 - name: Install Neovim build dependencies
   block:
     - name: Install Neovim build dependencies and helpers
@@ -33,7 +37,7 @@
 
 - name: Ensure Neovim source path is present.
   ansible.builtin.file:
-    path: "{{ neovim_source_path }}"
+    path: "{{ nvim_sources }}"
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
@@ -42,7 +46,7 @@
 - name: Clone or Update Neovim Source from GitHub
   ansible.builtin.git:
     repo: "https://github.com/neovim/neovim.git"
-    dest: "{{ neovim_source_path }}"
+    dest: "{{ nvim_sources }}"
     version: "{{ neovim_desired_tag }}"
     clone: true
     update: true
@@ -77,7 +81,7 @@
 - name: Register Checked out Tag Number for Neovim Source
   ansible.builtin.command:
     cmd: git tag --points-at HEAD
-    chdir: "{{ neovim_source_path }}"
+    chdir: "{{ nvim_sources }}"
   register: neovim_source_tags
   tags: skip_ansible_lint
   when: neovim_exists.rc == 0
@@ -104,20 +108,20 @@
     - name: Clean Neovim build and deps dirs before building.
       ansible.builtin.command:
         cmd: "make distclean"
-        chdir: "{{ neovim_source_path }}"
+        chdir: "{{ nvim_sources }}"
       tags: skip_ansible_lint
 
     - name: Build neovim from source.
       ansible.builtin.command:
         cmd: "make"
-        chdir: "{{ neovim_source_path }}"
+        chdir: "{{ nvim_sources }}"
       tags: skip_ansible_lint
 
     - name: Install Neovim.
       become: true
       ansible.builtin.command:
         cmd: "make install"
-        chdir: "{{ neovim_source_path }}"
+        chdir: "{{ nvim_sources }}"
       tags: skip_ansible_lint
 
 - name: Install Debug Adapter
