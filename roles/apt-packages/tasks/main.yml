@@ -3,8 +3,11 @@
   ansible.builtin.set_fact:
     additional_pkgs:
       - rofi
+      - python3-venv
+      - git-flow
+      - git-lfs
     when: additional_pkgs is not defined
-    tags: skip_ansible_lint
+  tags: skip_ansible_lint
 
 - name: Install Additional Apt Packages
   become: true
