@@ -1,0 +1,60 @@
+---
+- name: Set local_bin Path if Not Defined
+  ansible.builtin.set_fact:
+    local_bin: "{{ ansible_env.HOME }}/.local/bin"
+  when: local_bin is not defined
+
+- name: Ensure local_bin exists
+  ansible.builtin.file:
+    state: directory
+    path: "{{ local_bin }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+
+- name: Get Kitty Installer Script
+  ansible.builtin.get_url:
+    url: https://sw.kovidgoyal.net/kitty/installer.sh
+    dest: /tmp/kitty.sh
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0770"
+  become: false
+
+- name: Install Kitty Binaries
+  ansible.builtin.command:
+    cmd: bash /tmp/kitty.sh
+    creates: "{{ ansible_env.HOME }}/.local/kitty.app"
+  become: false
+
+- name: Link Kitty Binary
+  ansible.builtin.file:
+    src: "{{ ansible_env.HOME }}/.local/kitty.app/bin/kitty"
+    dest: "{{ local_bin }}/kitty"
+    state: link
+  become: false
+
+- name: Link Kitten Binary
+  ansible.builtin.file:
+    src: "{{ ansible_env.HOME }}/.local/kitty.app/bin/kitten"
+    dest: "{{ local_bin }}/kitten"
+    state: link
+  become: false
+
+- name: Ensure User Applications Dir Exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.local/share/applications"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: "0775"
+
+- name: Install Kitty Desktop File
+  ansible.builtin.template:
+    src: kitty.conf.j2
+    dest: "{{ ansible_env.HOME }}/.local/share/applications/kitty.desktop"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: "0775"
+
+# vim: ft=yaml.ansible:

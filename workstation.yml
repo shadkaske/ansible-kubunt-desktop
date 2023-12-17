@@ -52,5 +52,7 @@
       tags: snaps
     - role: flatpaks
       tags: flatpaks
+    - role: kitty
+      tags: kitty
 
 # vim: ft=yaml.ansible:
