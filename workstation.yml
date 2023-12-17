@@ -42,5 +42,7 @@
       tags: shell
     - role: nvim
       tags: [nvim, neovim]
+    - role: fonts
+      tags: [font, fonts]
 
 # vim: ft=yaml.ansible:

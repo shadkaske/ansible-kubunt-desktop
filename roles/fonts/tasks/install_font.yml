@@ -1,0 +1,24 @@
+---
+- name: Check if Font Is Installed - {{ item }}
+  ansible.builtin.find:
+    paths:
+      - "{{ fonts_dir }}"
+    patterns:
+      - "{{ item }}*"
+  register: font_found
+
+- name: Installing Nerd Font - {{ item }}
+  ansible.builtin.unarchive:
+    src: "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/{{ item }}.zip"
+    dest: "{{ fonts_dir }}"
+    remote_src: true
+    exclude:
+      - "*Windows*"
+      - "*LICENSE*"
+      - "*readme*"
+      - "*uuid*"
+  ignore_unreachable: true
+  when: font_found.matched < 1
+
+# code: language=ansible
+# vim: ft=yaml.ansible

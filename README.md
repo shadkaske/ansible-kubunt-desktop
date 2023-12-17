@@ -25,6 +25,17 @@ Neovim Source:
 neovim_source_path: "{{ ansible_env.HOME }}/Code/sources/neovim"
 ```
 
+### Fonts
+
+By default the following [Nerd Fonts](https://www.nerdfonts.com) will be installed. To override, set a font_names variable as a list.
+
+```yaml
+font_names:
+  - FiraCode
+  - SourceCodePro
+  - JetBrainsMono
+```
+
 ### TODO:
     - Firefox:
         - Policies for initial set up
