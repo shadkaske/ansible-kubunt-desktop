@@ -3,6 +3,7 @@ roles:
   - name: bodsch.snapd
   - name: darkwizard242.googlechrome
   - name: gantsign.visual-studio-code
+  - name: darkwizard242.googlechrome
 
 collections:
   - community.general

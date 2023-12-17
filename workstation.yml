@@ -48,6 +48,9 @@
       tags: plasma
     - role: firefox
       tags: firefox
+    - role: darkwizard242.googlechrome
+      tags: chrome
+      become: true
     - role: snaps
       tags: snaps
     - role: flatpaks
