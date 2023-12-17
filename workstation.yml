@@ -73,5 +73,7 @@
       tags: [dotfiles, chezmoi]
     - role: iaccess
       tags: [iaccess, ibm]
+    - role: libvirt
+      tags: [libvirt, virt]
 
 # vim: ft=yaml.ansible:

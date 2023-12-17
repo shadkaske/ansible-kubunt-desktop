@@ -1,0 +1,28 @@
+---
+- name: Libvirt Set Up Block
+  become: true
+  block:
+    - name: Install libvirt Packages
+      ansible.builtin.package:
+        name:
+          - qemu-kvm
+          - libvirt-daemon-system
+          - virtinst
+          - libvirt-clients
+          - bridge-utils
+          - sshfs
+          - virt-manager
+          - virt-viewer
+        state: present
+      notify: enable libvirtd
+
+    - name: Add User to libvirt groups
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups:
+          - libvirt
+          - kvm
+          - libvirt-qemu
+        append: true
+
+# vim: ts=2 tw=2 et ft=yaml.ansible
