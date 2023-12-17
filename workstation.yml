@@ -48,5 +48,9 @@
       tags: plasma
     - role: firefox
       tags: firefox
+    - role: snaps
+      tags: snaps
+    - role: flatpaks
+      tags: flatpaks
 
 # vim: ft=yaml.ansible:
