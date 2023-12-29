@@ -1,4 +1,29 @@
 ---
+- name: Ensure Snapd Is Installed
+  ansible.builtin.apt:
+    name: snapd
+    state: present
+  become: true
+
+- name: Ensure Snapd is Started and Enabled
+  ansible.builtin.systemd:
+    enabled: true
+    name: snapd
+    state: started
+  become: true
+
+- name: Reload Udev
+  ansible.builtin.service:
+    name: udev
+    state: restarted
+  become: true
+
+- name: Ensure Snap Core is Installed
+  community.general.snap:
+    name: core
+    state: present
+  become: true
+
 - name: Set Default Classic Snaps
   ansible.builtin.set_fact:
     classic_snaps:

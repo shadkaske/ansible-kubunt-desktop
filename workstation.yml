@@ -3,6 +3,9 @@
   hosts: workstations
   remote_user: kaskshad
 
+  vars:
+    de_choice: "gnome"
+
   pre_tasks:
     - name: Update System
       become: true
@@ -46,6 +49,8 @@
         mode: "0775"
 
   roles:
+    - role: snaps
+      tags: snaps
     - role: nodejs
       tags: [node, nodejs]
     - role: shell
@@ -56,13 +61,12 @@
       tags: [font, fonts]
     - role: plasma
       tags: plasma
+      when: de_choice == 'plasma'
     - role: firefox
       tags: firefox
     - role: darkwizard242.googlechrome
       tags: chrome
       become: true
-    - role: snaps
-      tags: snaps
     - role: apt-packages
       tags: apt-packages
     - role: kitty
