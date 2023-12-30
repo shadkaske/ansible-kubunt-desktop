@@ -1,128 +1,19 @@
 ---
-- name: Set source path variable
-  ansible.builtin.set_fact:
-    nvim_sources: "{{ neovim_source_path | default(ansible_env.HOME + '/Code/sources/neovim') }}"
-
-- name: Install Neovim build dependencies
-  block:
-    - name: Install Neovim build dependencies and helpers
-      become: true
-      ansible.builtin.apt:
-        name:
-          - autoconf
-          - automake
-          - cmake
-          - curl
-          - doxygen
-          - g++
-          - gettext
-          - git
-          - libtool
-          - libtool-bin
-          - ninja-build
-          - pkg-config
-          - python3-neovim
-          - unzip
-        state: present
-
-# ---------------------------------------------------------------------------- #
+- name: Install Neovim dependencies and helpers
+  become: true
+  ansible.builtin.apt:
+    name:
+      - curl
+      - pkg-config
+      - python3-neovim
+      - unzip
+    state: present
 
 - name: Remove distribution packaged version
   become: true
   ansible.builtin.package:
     name: neovim
     state: absent
-
-# ---------------------------------------------------------------------------- #
-
-- name: Ensure Neovim source path is present.
-  ansible.builtin.file:
-    path: "{{ nvim_sources }}"
-    state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: '0755'
-
-- name: Clone or Update Neovim Source from GitHub
-  ansible.builtin.git:
-    repo: "https://github.com/neovim/neovim.git"
-    dest: "{{ nvim_sources }}"
-    version: "{{ neovim_desired_tag }}"
-    clone: true
-    update: true
-    force: true
-  tags: skip_ansible_lint
-
-# ---------------------------------------------------------------------------- #
-
-- name: Register nvim_exists
-  ansible.builtin.command:
-    cmd: which nvim
-  failed_when: false
-  changed_when: false
-  check_mode: false
-  register: neovim_exists
-
-- name: Register Neovim Version Change
-  ansible.builtin.set_fact:
-    neovim_version_change: false
-
-- name: Register Neovim Current Version
-  ansible.builtin.command: nvim --version
-  register: neovim_version_output
-  tags: skip_ansible_lint
-  when: neovim_exists.rc == 0
-
-- name: Extract Neovim Version Number
-  ansible.builtin.set_fact:
-    installed_neovim_version: "{{ neovim_version_output.stdout_lines | first | regex_search('[0-9].[0-9].[0-9]') }}"
-  when: neovim_exists.rc == 0
-
-- name: Register Checked out Tag Number for Neovim Source
-  ansible.builtin.command:
-    cmd: git tag --points-at HEAD
-    chdir: "{{ nvim_sources }}"
-  register: neovim_source_tags
-  tags: skip_ansible_lint
-  when: neovim_exists.rc == 0
-
-- name: Register Currently Installed Verions
-  ansible.builtin.set_fact:
-    checked_out_neovim_version: "{{ neovim_source_tags.stdout_lines | last | split('v') | last }}"
-  when: neovim_exists.rc == 0
-
-- name: Register need_version update
-  ansible.builtin.set_fact:
-    needs_compile: "{{ checked_out_neovim_version != installed_neovim_version }}"
-  when: neovim_exists.rc == 0
-
-- name: Register needs_compile to true when neovim does not exist
-  ansible.builtin.set_fact:
-    needs_compile: true
-  when: neovim_exists.rc != 0
-
-# ---------------------------------------------------------------------------- #
-- name: Compile and Install Neovim If Needed
-  when: needs_compile
-  block:
-    - name: Clean Neovim build and deps dirs before building.
-      ansible.builtin.command:
-        cmd: "make distclean"
-        chdir: "{{ nvim_sources }}"
-      tags: skip_ansible_lint
-
-    - name: Build neovim from source.
-      ansible.builtin.command:
-        cmd: "make"
-        chdir: "{{ nvim_sources }}"
-      tags: skip_ansible_lint
-
-    - name: Install Neovim.
-      become: true
-      ansible.builtin.command:
-        cmd: "make install"
-        chdir: "{{ nvim_sources }}"
-      tags: skip_ansible_lint
 
 - name: Install Debug Adapter
   ansible.builtin.include_tasks: debug_adapter.yml
