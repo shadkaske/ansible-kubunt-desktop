@@ -35,6 +35,12 @@
     line: "export PATH=\"$PATH:{{ npm_global }}/bin\""
     state: present
 
+- name: Add Snap Node Path to .profile
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.profile"
+    line: "export PATH=\"$PATH:/snap/node/current/bin\""
+    state: present
+
 - name: Install Global NPM Packages if Defined
   community.general.npm:
     name: "{{ item }}"
