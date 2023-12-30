@@ -1,10 +1,24 @@
 ---
-- name: Add Fish Shell PPA
+- name: Add PHP Repository
   become: true
-  ansible.builtin.apt_repository:
-    repo: ppa:fish-shell/release-3
-    state: present
-    update_cache: true
+  tags: [php, dev, ppa]
+  block:
+    - name: Get Fish Shell PPA GPG Key
+      ansible.builtin.command:
+        cmd: >
+          gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/fish_shell_ppa.gpg
+          --keyserver keyserver.ubuntu.com --recv-keys 59FDA1CE1B84B3FAD89366C027557F056DC33CA5
+        creates: /usr/share/keyrings/fish_shell_ppa.gpg
+
+    - name: Add Fish Shell PPA Source
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/fish_shell_ppa.list
+        content: >
+          deb [arch=amd64 signed-by=/usr/share/keyrings/fish_shell_ppa.gpg]
+          https://ppa.launchpadcontent.net/fish-shell/release-3/ubuntu {{ ansible_distribution_release }} main
+        owner: root
+        group: root
+        mode: "0644"
 
 - name: Install Fish Shell
   become: true
