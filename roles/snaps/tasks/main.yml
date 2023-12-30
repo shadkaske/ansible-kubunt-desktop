@@ -32,6 +32,7 @@
       - phpstorm
       - pycharm-community
       - ruby
+      - node
   when: classic_snaps is not defined
 
 - name: Set Default Snaps
@@ -40,11 +41,8 @@
       - bitwarden
       - bw
       - dbeaver-ce
-      - libreoffice
-      - remmina
       - postman
       - teams-for-linux
-      - zoom-client
   when: snaps is not defined
 
 - name: Set Default Edge Snaps

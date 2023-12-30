@@ -8,6 +8,7 @@
       - lftp
       - python3-pip
       - python3-venv
+      - remmina
       - rofi
       - silversearcher-ag
       - wget
