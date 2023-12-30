@@ -13,10 +13,10 @@
     group: root
     mode: "0755"
 
-- name: Copy Firefox Policy
+- name: Install Firefox Policy
   become: true
-  ansible.builtin.copy:
-    src: files/firefox_policies.json
+  ansible.builtin.template:
+    src: policies.json.j2
     dest: "{{ ff_policy_path }}/policies.json"
     owner: root
     group: root
