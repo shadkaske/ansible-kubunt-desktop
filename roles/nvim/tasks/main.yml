@@ -15,7 +15,4 @@
     name: neovim
     state: absent
 
-- name: Install Debug Adapter
-  ansible.builtin.include_tasks: debug_adapter.yml
-
 # vim: ft=yaml.ansible:
