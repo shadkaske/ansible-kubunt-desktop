@@ -4,7 +4,7 @@
   remote_user: kaskshad
 
   vars:
-    de_choice: "gnome"
+    de_choice: "plasma"
 
   pre_tasks:
     - name: Update System
@@ -71,10 +71,10 @@
       tags: apt-packages
     - role: kitty
       tags: kitty
-    - role: wezterm
-      tags: wezterm
+    # - role: wezterm
+    #   tags: wezterm
     - role: dotfiles
-      tags: [dotfiles, chezmoi]
+      tags: [dotfiles]
     - role: iaccess
       tags: [iaccess, ibm]
     - role: libvirt
