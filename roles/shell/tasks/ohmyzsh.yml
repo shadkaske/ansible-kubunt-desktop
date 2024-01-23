@@ -76,5 +76,13 @@
     update: true
     version: master
 
+- name: Install zsh-vi-mode Plugin
+  ansible.builtin.git:
+    repo: https://github.com/jeffreytse/zsh-vi-mode.git
+    dest: "{{ plugin_dir }}/zsh-vi-mode"
+    clone: true
+    update: true
+    version: master
+
 # code: language=ansible
 # vim: set ft=yaml.ansible:
