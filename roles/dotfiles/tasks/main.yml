@@ -11,6 +11,7 @@
     shell: "{{ user_shell }}"
 
 - name: Install GNU Stow
+  become: true
   ansible.builtin.apt:
     name: stow
     state: present
