@@ -32,7 +32,7 @@
       - phpstorm
       - pycharm-community
       - ruby
-      - node
+      - nvim
   when: classic_snaps is not defined
 
 - name: Set Default Snaps
@@ -43,6 +43,7 @@
       - dbeaver-ce
       - postman
       - teams-for-linux
+      - remmina
   when: snaps is not defined
 
 - name: Set Default Edge Snaps
