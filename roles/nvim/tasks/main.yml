@@ -5,14 +5,25 @@
     name:
       - curl
       - pkg-config
-      - python3-neovim
       - unzip
     state: present
+
+- name: Install pynvim with Pip
+  ansible.builtin.pip:
+    name: pynvim
 
 - name: Remove distribution packaged version
   become: true
   ansible.builtin.package:
     name: neovim
     state: absent
+
+- name: Clone neovim config
+  ansible.builtin.git:
+    repo: git@github.com:shadkaske/neovim-kick.git
+    dest: "{{ ansible_env.HOME }}/.config/nvim"
+    clone: true
+    update: true
+    version: main
 
 # vim: ft=yaml.ansible:
