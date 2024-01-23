@@ -1,54 +1,7 @@
 ---
-- name: Gather Package Facts
-  ansible.builtin.package_facts:
-    manager: apt
-
-- name: Download, Install and Apply Chezmoi if Missing
-  when: "not 'chezmoi' in ansible_facts.packages"
-  block:
-    - name: Get the Url Details for latest Chezmoi
-      ansible.builtin.uri:
-        url: https://github.com/twpayne/chezmoi/releases/latest
-      register: chezmoi_latest
-
-    - name: Split the Redirect Url
-      ansible.builtin.set_fact:
-        chezmoi_url_parts: "{{ chezmoi_latest.url | urlsplit }}"
-
-    - name: Get the Version Number from the URL
-      ansible.builtin.set_fact:
-        chezmoi_version: "{{ chezmoi_url_parts.path | split('/') | last }}"
-
-    - name: Split the version number for the Alpha
-      ansible.builtin.set_fact:
-        chezmoi_version_parts: "{{ chezmoi_version | split('v') }}"
-
-    - name: Set the Chezmoi Version Number
-      ansible.builtin.set_fact:
-        chezmoi_version_number: "{{ chezmoi_version_parts[-1] }}"
-
-    - name: Download Deb File
-      ansible.builtin.get_url:
-        url: "https://github.com/twpayne/chezmoi/releases/download/{{ chezmoi_version }}/chezmoi_{{ chezmoi_version_number }}_linux_amd64.deb"
-        dest: "/tmp/chezmoi_{{ chezmoi_version_number }}.deb"
-        owner: root
-        group: root
-        mode: "0644"
-      become: true
-
-    - name: Install Chezmoi Deb
-      become: true
-      ansible.builtin.apt:
-        deb: "/tmp/chezmoi_{{ chezmoi_version_number }}.deb"
-
-    - name: Download dotfiles and apply
-      ansible.builtin.command:
-        cmd: chezmoi init --apply https://github.com/shadkaske/chezmoi.git
-        creates: "{{ ansible_env.HOME }}/.local/share/chezmoi"
-
 - name: Set Default Shell Variable if not Set
   ansible.builtin.set_fact:
-    user_shell: "/bin/fish"
+    user_shell: "/bin/zsh"
   when: user_shell is not defined
 
 - name: Set user default shell
@@ -56,5 +9,19 @@
   ansible.builtin.user:
     name: "{{ ansible_user }}"
     shell: "{{ user_shell }}"
+
+- name: Install GNU Stow
+  ansible.builtin.apt:
+    name: stow
+    state: present
+
+- name: Clone dotfiles
+  ansible.builtin.git:
+    repo: git@github.com:shadkaske/dotfiles.git
+    dest: "{{ ansible_env.HOME }}/.dotfiles"
+    clone: true
+    update: true
+    version: master
+
 
 # vim: ft=yaml.ansible:
